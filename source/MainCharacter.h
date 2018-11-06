@@ -7,14 +7,33 @@ class MainCharacterSprite : public Sprite
 {
     public:
         using Sprite::Sprite;
-
-    private: 
+        ~MainCharacterSprite();
+        void KillSprite();
         void Allocate(const u8* gfx_mem);
+
+        void MoveUp();
+        void MoveDown();
+        void MoveLeft();
+        void MoveRight();
+        void Idle();
+    private: 
         void Animate();
+
+        u16* sprite_gfx_mem[12];
 };
 
-void MainCharacterSprite::Allocate(const u8 *gfx_mem)
-{
+//-----------------------------------------------------------------------------
+//  Constructor/Destructor
+//-----------------------------------------------------------------------------
+MainCharacterSprite::~MainCharacterSprite() {
+    KillSprite();
+}
+//  End Constructor/Destructor
+
+//-----------------------------------------------------------------------------
+//  Memory allocation and sprite animation
+//-----------------------------------------------------------------------------
+void MainCharacterSprite::Allocate(const u8 *gfx_mem) {
     int offset = 0;
     switch (this->size) {
         case SpriteSize_8x8:
@@ -53,37 +72,54 @@ void MainCharacterSprite::Allocate(const u8 *gfx_mem)
         return;
     }
 
-	DynamicArrayDelete(&(this->sprite_gfx_mem));
-	DynamicArrayInit(&(this->sprite_gfx_mem), 12);
-
-	u16* temp;
-
+    // allocate memory
 	for(int i = 0; i < 12; i++)
 	{
-		temp = oamAllocateGfx(this->oam, this->size, this->format);
-		dmaCopy(gfx_mem, temp, offset);
-		DynamicArraySet(&(this->sprite_gfx_mem), i, temp);
+		this->sprite_gfx_mem[i] = oamAllocateGfx(this->oam, this->size, this->format);
+		dmaCopy(gfx_mem, this->sprite_gfx_mem[i], offset);
 		gfx_mem += offset;
 	}
 
     this->id = id;
     sprites[id] = this;
     allocationCount++;
-	// if(s.sprite_gfx_mem) {
-	// 	spriteMemoryUsage += (s.size & 0xFFF) << 5;
-	// 	oom = false;
-	// } else {
-	// 	oom = true;
-	// 	//only a failure of the allocator if there was enough room
-	// 	if(spriteMemoryUsage + ((s.size & 0xFFF) << 5) < spriteMemSize)
-	// 		oomCount++;
-	// }
 }
 
-void MainCharacterSprite::Animate()
-{
+void MainCharacterSprite::Animate() {
+    this->anim_frame++;
+    if( this->anim_frame >= 3 ) {
+        this->anim_frame = 0;
+    }
+	this->gfx_frame = this->anim_frame + this->state * 3;
 
+    this->currentGfxFrame = this->sprite_gfx_mem[this->gfx_frame];
+    this->SetOam(0, 0);
 }
+void MainCharacterSprite::MoveUp() {
+    if (position.y >= SCREEN_TOP) position.y--;
+    state = W_UP;
+}
+void MainCharacterSprite::MoveDown() {
+    if (position.y <= SCREEN_BOTTOM) position.y++;
+    state = W_DOWN;
+}
+void MainCharacterSprite::MoveLeft() {
+    if (position.x >= SCREEN_LEFT) position.x--;
+    state = W_LEFT;
+}
+void MainCharacterSprite::MoveRight() {
+    if (position.x <= SCREEN_RIGHT) position.x++;
+    state = W_RIGHT;
+}
+void MainCharacterSprite::Idle() {
+    anim_frame--;
+}
+// End memory allocation/movement
 
+
+void MainCharacterSprite::KillSprite() {
+    sprites[this->id] = NULL;
+    allocationCount--;
+}
 
 #endif
