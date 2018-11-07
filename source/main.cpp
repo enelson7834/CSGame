@@ -2,43 +2,13 @@
 #include <nds.h>
 #include <stdio.h>
 
-enum {SCREEN_TOP = 0, SCREEN_BOTTOM = 192, SCREEN_LEFT = 0, SCREEN_RIGHT = 256};
+#ifndef SCREEN_BOUNDARIES
+#define SCREEN_BOUNDARIES
+    enum {SCREEN_TOP = 0, SCREEN_BOTTOM = 192, SCREEN_LEFT = 0, SCREEN_RIGHT = 256};
+#endif
+
 #include "MainCharacter.h"
 #define FRAMES_PER_ANIMATION 3
-
-typedef struct
-{
-	int x;
-	int y;
-
-	u16* sprite_gfx_mem[12];
-	int gfx_frame;
-
-	int state;
-	int anim_frame;
-
-}Man;
-
-void animateMan(Man *sprite)
-{
-	sprite->gfx_frame = sprite->anim_frame + sprite->state * FRAMES_PER_ANIMATION;
-}
-
-//---------------------------------------------------------------------
-// Initializing a woman requires us to load all of her graphics frames 
-// into memory
-//---------------------------------------------------------------------
-void initMan(Man *sprite, u8* gfx)
-{
-	int i;
-
-	for(i = 0; i < 12; i++)
-	{
-		sprite->sprite_gfx_mem[i] = oamAllocateGfx(&oamMain, SpriteSize_32x32, SpriteColorFormat_256Color);
-		dmaCopy(gfx, sprite->sprite_gfx_mem[i], 32*32);
-		gfx += 32*32;
-	}
-}
 
 // git adds a nice header we can include to access the data
 // this has the same name as the image
@@ -64,7 +34,7 @@ int main(void)
 	//-----------------------------------------------------------------
 	// Initialize sprites
 	//-----------------------------------------------------------------
-    MainCharacterSprite ManSprite2({0,0,0,0}, SpriteSize_32x32, SpriteColorFormat_256Color, &oamMain);
+    MainCharacterSprite ManSprite2(0, 0, SpriteSize_32x32, SpriteColorFormat_256Color, &oamMain);
     ManSprite2.Allocate((u8*)manTiles);
 
     dmaCopy(manPal, SPRITE_PALETTE, manPalLen);
@@ -86,6 +56,8 @@ int main(void)
 
 //    scroll(bg3, 256, 256);
 
+    consoleDemoInit();
+
     int keys = 0;
     int sx = 0;
     int sy = 0;
@@ -102,24 +74,20 @@ int main(void)
 
         keys = keysHeld();
 
+        ManSprite2.MoveSprite(keys);
         if(keys & KEY_UP){
             sy--;
-            ManSprite2.MoveUp();
         }
         else if(keys & KEY_DOWN){
             sy++;
-            ManSprite2.MoveDown();
         }
         else if(keys & KEY_LEFT){
             sx--;
-            ManSprite2.MoveLeft();
         }
         else if(keys & KEY_RIGHT){
             sx++;
-            ManSprite2.MoveRight();
         }
         else{
-            ManSprite2.Idle();
         }
 
         // ManSprite.anim_frame++;
@@ -157,12 +125,8 @@ int main(void)
         oamUpdate(&oamMain);
         oamUpdate(&oamSub);
 
-        // consoleClear();
-        // iprintf("j = %d\n", j);
-        // iprintf("Tiles = %d\n", manTiles[j++]);
-        // iprintf("Sprite OAM = %d\n", ManSprite.oam);
-        // iprintf("Scroll x: %d Scroll y: %d\n", sx, sy);
-        // iprintf("Press 'B' to exit");
+        consoleClear();
+        iprintf("X, Y = %d, %d\n", ManSprite2.GetX(), ManSprite2.GetY());
     }
     return 0;
 }

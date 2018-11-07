@@ -1,6 +1,13 @@
 #ifndef MAIN_CHARACTER_SPRITE
 #define MAIN_CHARACTER_SPRITE
 
+#ifndef SCREEN_BOUNDARIES
+#define SCREEN_BOUNDARIES
+    enum {SCREEN_TOP = 0, SCREEN_BOTTOM = 192, SCREEN_LEFT = 0, SCREEN_RIGHT = 256};
+#endif
+
+enum SpriteState {W_UP = 0, W_RIGHT = 1, W_DOWN = 2, W_LEFT = 3, IDLE = 4};
+
 #include "sprite.h"
 
 class MainCharacterSprite : public Sprite
@@ -11,12 +18,16 @@ class MainCharacterSprite : public Sprite
         void KillSprite();
         void Allocate(const u8* gfx_mem);
 
-        void MoveUp();
-        void MoveDown();
+        void MoveSprite(int keys);
+
+    private:
+        void IdleJump();
+        void RightJump();
+        void LeftJump();
+        void Crouch();
         void MoveLeft();
         void MoveRight();
-        void Idle();
-    private: 
+        void Idle(); 
         void Animate();
 
         u16* sprite_gfx_mem[12];
@@ -34,37 +45,6 @@ MainCharacterSprite::~MainCharacterSprite() {
 //  Memory allocation and sprite animation
 //-----------------------------------------------------------------------------
 void MainCharacterSprite::Allocate(const u8 *gfx_mem) {
-    int offset = 0;
-    switch (this->size) {
-        case SpriteSize_8x8:
-            offset = 8*8;
-            break;
-        case SpriteSize_8x16:
-        case SpriteSize_16x8:
-            offset = 16*8;
-            break;
-        case SpriteSize_8x32:
-        case SpriteSize_16x16:
-        case SpriteSize_32x8:
-            offset = 32*8;
-            break;
-        case SpriteSize_16x32:
-        case SpriteSize_32x16:
-            offset = 32*16;
-            break;
-        case SpriteSize_32x32:
-            offset = 32*32;
-            break;
-        case SpriteSize_32x64:
-        case SpriteSize_64x32:
-            offset = 64*32;
-            break;
-        case SpriteSize_64x64:
-            offset = 64*64;
-            break;
-        default:
-			offset = 0;
-	}
 
     int id = this->FindFreeAllocationCount();
     if (id == -1)
@@ -76,8 +56,8 @@ void MainCharacterSprite::Allocate(const u8 *gfx_mem) {
 	for(int i = 0; i < 12; i++)
 	{
 		this->sprite_gfx_mem[i] = oamAllocateGfx(this->oam, this->size, this->format);
-		dmaCopy(gfx_mem, this->sprite_gfx_mem[i], offset);
-		gfx_mem += offset;
+		dmaCopy(gfx_mem, this->sprite_gfx_mem[i], 32*32);
+		gfx_mem += 32*32;
 	}
 
     this->id = id;
@@ -91,27 +71,67 @@ void MainCharacterSprite::Animate() {
         this->anim_frame = 0;
     }
 	this->gfx_frame = this->anim_frame + this->state * 3;
+    this->y += this->dy;
+    this->x += this->dx;
+
+    if (this->x >= SCREEN_RIGHT) {
+        this->x = SCREEN_RIGHT ; 
+    }
+    if (this->x <= SCREEN_LEFT) { 
+        this->x = SCREEN_LEFT;
+    }
+
+    if (this->y <= SCREEN_TOP) {
+        this->y = SCREEN_TOP;
+    }
+    if (this->y >= SCREEN_BOTTOM) {
+        this->y = SCREEN_BOTTOM;
+    }
 
     this->currentGfxFrame = this->sprite_gfx_mem[this->gfx_frame];
     this->SetOam(0, 0);
 }
-void MainCharacterSprite::MoveUp() {
-    if (position.y >= SCREEN_TOP) position.y--;
-    state = W_UP;
+
+void MainCharacterSprite::MoveSprite(int keys) {
+    if(keys & KEY_UP){
+        IdleJump();
+    }
+    else if(keys & KEY_DOWN){
+        Crouch();
+    }
+    else if(keys & KEY_LEFT){
+        MoveLeft();
+    }
+    else if(keys & KEY_RIGHT){
+        MoveRight();
+    }
+    else{
+        Idle();
+    }
 }
-void MainCharacterSprite::MoveDown() {
-    if (position.y <= SCREEN_BOTTOM) position.y++;
-    state = W_DOWN;
+void MainCharacterSprite::IdleJump() {
+    this->dy++;
+    this->state = W_UP;
+}
+void MainCharacterSprite::RightJump() {
+
+}
+void MainCharacterSprite::LeftJump() {
+
+}
+void MainCharacterSprite::Crouch() {
+    this->dy--;
 }
 void MainCharacterSprite::MoveLeft() {
-    if (position.x >= SCREEN_LEFT) position.x--;
-    state = W_LEFT;
+    this->dx--;
+    this->state = W_LEFT;
 }
 void MainCharacterSprite::MoveRight() {
-    if (position.x <= SCREEN_RIGHT) position.x++;
+    this->dx++;
     state = W_RIGHT;
 }
 void MainCharacterSprite::Idle() {
+    this->dx = this->dy = 0;
     anim_frame--;
 }
 // End memory allocation/movement

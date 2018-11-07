@@ -7,20 +7,18 @@
 //our very simple sprite engine...
 #define  SPRITE_MAX 128
 
-enum SpriteState {W_UP = 0, W_RIGHT = 1, W_DOWN = 2, W_LEFT = 3, IDLE = 4};
-
-struct Position{
-	int x, y;
-	int dx, dy;
-};
-
 //this is our game entity. Notice it has a bit more info than
 //would fit into OAM.  This method is a lot more flexible than trying
 //to treat oam as a game object directly.
 class Sprite
 {
 	public:
-		Sprite(Position p, SpriteSize size, SpriteColorFormat format, OamState* oam);
+		Sprite(int x, int y, SpriteSize size, SpriteColorFormat format, OamState* oam);
+
+		int GetX();
+		int GetY();
+		int GetDx();
+		int GetDy();
 
 		virtual void SetOam(int priority, int palette_alpha);
 
@@ -31,7 +29,7 @@ class Sprite
 		friend void animateSprites();
 
 	protected:
-		Position position;
+		int x, y, dx, dy;
         u16* currentGfxFrame;
 		SpriteColorFormat format;
 		SpriteSize size;
@@ -51,11 +49,25 @@ Sprite* sprites[SPRITE_MAX] = {NULL};
 u32 allocationCount = 0;
 
 //a sprite constructor
-Sprite::Sprite(Position position, SpriteSize size, SpriteColorFormat format, OamState* oam) {
-	this->position = position;
+Sprite::Sprite(int x, int y, SpriteSize size, SpriteColorFormat format, OamState* oam) {
+	this->x = x;
+	this->y = y;
 	this->size = size;
 	this->format = format;
 	this->oam = oam;
+}
+
+int Sprite::GetX() {
+	return x;
+}
+int Sprite::GetY() {
+	return y;
+}
+int Sprite::GetDx() {
+	return dx;
+}
+int Sprite::GetDy() {
+	return dy;
 }
 
 int Sprite::FindFreeAllocationCount()
@@ -73,7 +85,7 @@ void Sprite::SetOam(int priority, int palette_alpha)
     //void oamSet(OamState *oam, int id, int x, int y, int priority, int palette_alpha, SpriteSize size, SpriteColorFormat format, const void *gfxOffset, int affineIndex, bool sizeDouble, bool hide, bool hflip, bool vflip, bool mosaic)	
     oamSet(this->oam, 
         this->id, 
-        this->position.x, this->position.y, 
+        this->x, this->y, 
         priority, 
         palette_alpha,
         this->size,

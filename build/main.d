@@ -61,6 +61,7 @@ main.o: C:/devkitPro/manual/CSGame/source/main.cpp \
  C:/devkitPro/libnds/include/nds/arm9/nand.h \
  C:/devkitPro/manual/CSGame/source/MainCharacter.h \
  C:/devkitPro/manual/CSGame/source/sprite.h \
+ C:/devkitPro/manual/CSGame/build/Background.h \
  C:/devkitPro/manual/CSGame/build/man.h
 
 C:/devkitPro/libnds/include/nds.h:
@@ -186,5 +187,7 @@ C:/devkitPro/libnds/include/nds/arm9/nand.h:
 C:/devkitPro/manual/CSGame/source/MainCharacter.h:
 
 C:/devkitPro/manual/CSGame/source/sprite.h:
+
+C:/devkitPro/manual/CSGame/build/Background.h:
 
 C:/devkitPro/manual/CSGame/build/man.h:
