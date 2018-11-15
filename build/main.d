@@ -1,4 +1,4 @@
-main.o: C:/devkitPro/manual/CSGame/source/main.cpp \
+main.o: D:/Users/Eugene/Downloads/CSGame/CSGame/source/main.cpp \
  C:/devkitPro/libnds/include/nds.h \
  C:/devkitPro/libnds/include/nds/libversion.h \
  C:/devkitPro/libnds/include/nds/ndstypes.h \
@@ -59,10 +59,13 @@ main.o: C:/devkitPro/manual/CSGame/source/main.cpp \
  C:/devkitPro/libnds/include/nds/arm9/video.h \
  C:/devkitPro/libnds/include/nds/arm9/videoGL.h \
  C:/devkitPro/libnds/include/nds/arm9/nand.h \
- C:/devkitPro/manual/CSGame/source/MainCharacter.h \
- C:/devkitPro/manual/CSGame/source/sprite.h \
- C:/devkitPro/manual/CSGame/build/Background.h \
- C:/devkitPro/manual/CSGame/build/man.h
+ D:/Users/Eugene/Downloads/CSGame/CSGame/include/Sprite.h \
+ D:/Users/Eugene/Downloads/CSGame/CSGame/include/Position.h \
+ D:/Users/Eugene/Downloads/CSGame/CSGame/include/enums.h \
+ D:/Users/Eugene/Downloads/CSGame/CSGame/include/SpriteAnimator.h \
+ D:/Users/Eugene/Downloads/CSGame/CSGame/include/MainCharacterSprite.h \
+ D:/Users/Eugene/Downloads/CSGame/CSGame/build/Background.h \
+ D:/Users/Eugene/Downloads/CSGame/CSGame/build/man.h
 
 C:/devkitPro/libnds/include/nds.h:
 
@@ -184,10 +187,16 @@ C:/devkitPro/libnds/include/nds/arm9/videoGL.h:
 
 C:/devkitPro/libnds/include/nds/arm9/nand.h:
 
-C:/devkitPro/manual/CSGame/source/MainCharacter.h:
+D:/Users/Eugene/Downloads/CSGame/CSGame/include/Sprite.h:
 
-C:/devkitPro/manual/CSGame/source/sprite.h:
+D:/Users/Eugene/Downloads/CSGame/CSGame/include/Position.h:
 
-C:/devkitPro/manual/CSGame/build/Background.h:
+D:/Users/Eugene/Downloads/CSGame/CSGame/include/enums.h:
 
-C:/devkitPro/manual/CSGame/build/man.h:
+D:/Users/Eugene/Downloads/CSGame/CSGame/include/SpriteAnimator.h:
+
+D:/Users/Eugene/Downloads/CSGame/CSGame/include/MainCharacterSprite.h:
+
+D:/Users/Eugene/Downloads/CSGame/CSGame/build/Background.h:
+
+D:/Users/Eugene/Downloads/CSGame/CSGame/build/man.h:

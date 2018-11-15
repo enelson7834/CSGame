@@ -1,6 +1,6 @@
 #pragma once
 
-template <int T>
+template <typename T>
 struct Position {
     T x, y, z;
-}
+};

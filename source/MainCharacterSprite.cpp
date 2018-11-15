@@ -3,7 +3,8 @@
 //---- Constructor/Destructor -------------------------------------------------
 //  
 //-----------------------------------------------------------------------------
-MainCharacterSprite::~MainCharacterSprite() {
+MainCharacterSprite::~MainCharacterSprite() 
+{
     KillSprite();
 }
 //  End Constructor/Destructor
@@ -11,14 +12,8 @@ MainCharacterSprite::~MainCharacterSprite() {
 //---- Memory allocation and sprite animation ---------------------------------
 //  
 //-----------------------------------------------------------------------------
-void MainCharacterSprite::Allocate(const u8 *gfx_mem) {
-
-    int id = this->FindFreeSpriteIndex();
-    if (id == -1)
-    {
-        return;
-    }
-
+void MainCharacterSprite::Allocate(const u8 *gfx_mem) 
+{
     // allocate memory for 12 frames
 	for(int i = 0; i < 12; i++)
 	{
@@ -26,12 +21,10 @@ void MainCharacterSprite::Allocate(const u8 *gfx_mem) {
 		dmaCopy(gfx_mem, this->sprite_gfx_mem[i], 32*32);
 		gfx_mem += 32*32;
 	}
-
-    this->oamId = id;
-    sprites[id] = this;
 }
 
-void MainCharacterSprite::Animate() {
+void MainCharacterSprite::Animate() 
+{
     this->anim_frame++;
     if( this->anim_frame >= 3 ) {
         this->anim_frame = 0;
@@ -55,12 +48,13 @@ void MainCharacterSprite::Animate() {
     }
 
     this->currentGfxFrame = this->sprite_gfx_mem[this->gfx_frame];
-    this->SetOam(0, 0);
+    this->SetOam();
 }
 
-void MainCharacterSprite::MoveSprite(int keys) {
+void MainCharacterSprite::MoveSprite(int keys) 
+{
     if(keys & KEY_UP){
-        IdleJump();
+        Jump();
     }
     else if(keys & KEY_DOWN){
         Crouch();
@@ -79,35 +73,42 @@ void MainCharacterSprite::MoveSprite(int keys) {
 //---- Main character sprite movement -----------------------------------------
 //  
 //-----------------------------------------------------------------------------
-void MainCharacterSprite::IdleJump() {
-    this->dy = std::max(this->dy - 0.1, -1 * TERMINAL_VELOCITY);
+void MainCharacterSprite::Jump() 
+{
+    this->dy = std::max(this->dy - 0.1, -1.0 * TERMINAL_VELOCITY);
     this->state = W_UP;
 }
-void MainCharacterSprite::RightJump() {
+void MainCharacterSprite::RightJump() 
+{
 
 }
-void MainCharacterSprite::LeftJump() {
+void MainCharacterSprite::LeftJump() 
+{
 
 }
-void MainCharacterSprite::Crouch() {
-    this->dy = std::min(this->dy + 0.1, TERMINAL_VELOCITY);
+void MainCharacterSprite::Crouch() 
+{
+    this->dy = std::min(this->dy + 0.1, (double) TERMINAL_VELOCITY);
     this->state = W_DOWN;
 }
-void MainCharacterSprite::MoveLeft() {
-    this->dx = std::max(this->dx - 0.1, -1 * TERMINAL_VELOCITY);
+void MainCharacterSprite::MoveLeft() 
+{
+    this->dx = std::max(this->dx - 0.1, -1.0 * TERMINAL_VELOCITY);
     this->state = W_LEFT;
 }
-void MainCharacterSprite::MoveRight() {
-    this->dx = std::min(this->dx + 0.1, TERMINAL_VELOCITY);
+void MainCharacterSprite::MoveRight() 
+{
+    this->dx = std::min(this->dx + 0.1, (double) TERMINAL_VELOCITY);
     this->state = W_RIGHT;
 }
-void MainCharacterSprite::Idle() {
+void MainCharacterSprite::Idle() 
+{
     this->dx = this->dy = 0;
     anim_frame--;
 }
 // End memory allocation/movement
 
-bool MainCharacterSprite::DetectCollision(u8* collsionMap, int mapWidth, u16* collsionTiles, u8* collsionPal, Position scroll, Direction dir)
+bool MainCharacterSprite::DetectCollision(u8* collsionMap, int mapWidth, u16* collsionTiles, u8* collsionPal, Position<int> scroll, Direction dir)
 {
     static const int tileWidth  = 8;
     static const int tileHeight = 8;
@@ -115,16 +116,15 @@ bool MainCharacterSprite::DetectCollision(u8* collsionMap, int mapWidth, u16* co
     int xpos, ypos;
     int mapx, mapy, tilex, tiley, palx, paly;
 
-    mapx = this->pos.x / tilewidth;
+    mapx = this->pos.x / tileWidth;
     mapy = this->pos.y / tileHeight;
     int mapval = mapx + (mapy * mapWidth);
 
     return false;
 }
 
-
-void MainCharacterSprite::KillSprite() {
-    sprites[this->id] = NULL;
+void MainCharacterSprite::KillSprite() 
+{
     for (int i = 0; i < 12; i++)
     {
         oamFreeGfx(this->oam, this->sprite_gfx_mem[i]);

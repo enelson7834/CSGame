@@ -1,12 +1,8 @@
 #include "Sprite.h"
 
-//an array of sprites
-Sprite* sprites[SPRITE_MAX] = {NULL};
-u32 spriteIndex = 0;
-
 //a sprite constructor
 Sprite::Sprite(	OamState* oam, 
-				Position<float> p 	= {0,0,0}, 
+				Position<double> p, 
 				SpriteSize size, 
 				SpriteColorFormat format) {
 	this->pos = p;
@@ -15,19 +11,9 @@ Sprite::Sprite(	OamState* oam,
 	this->oam = oam;
 }
 
-Position<float> Sprite::GetPosition()
+Position<double> Sprite::GetPosition()
 {
 	return this->pos;
-}
-
-int Sprite::FindFreeSpriteIndex()
-{
-	for(int i = 0; i < SPRITE_MAX; i++)
-	{
-		if(sprites[i] == NULL)
-			return i;
-	}
-	return -1;
 }
 
 void Sprite::SetOam()
@@ -47,14 +33,6 @@ void Sprite::SetOam()
 				this->hflip,
 				this->vflip, 
 				this->mosaic);
-}
-
-void animateSprites()
-{
-	//set oam to values required by my sprite
-	for(u32 i = 0; i < allocationCount; i++) {
-		sprites[i]->Animate();
-	}
 }
 
 // //sprite deconstructor

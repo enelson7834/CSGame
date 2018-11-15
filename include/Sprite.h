@@ -3,8 +3,7 @@
 
 #include <nds.h>
 #include "Position.h"
-
-#define  SPRITE_MAX 128
+#include "enums.h"
 
 //this is our game entity. Notice it has a bit more info than
 //would fit into OAM.  This method is a lot more flexible than trying
@@ -12,20 +11,17 @@
 class Sprite
 {
 	public:
-		Sprite(Position p, SpriteSize size, SpriteColorFormat format, OamState* oam);
+		Sprite(OamState* oam, Position<double> p, SpriteSize size, SpriteColorFormat format);
 
-		Position<float> GetPosition();
+		Position<double> GetPosition();
 
-		virtual void SetOam();
+	protected:
+		int FindFreeSpriteIndex();
+    	virtual void SetOam();
 
         virtual void KillSprite() = 0;
 		virtual void Animate() = 0;
 		virtual void Allocate(const u8* gfx) = 0;
-
-		friend void animateSprites();
-
-	protected:
-		int FindFreeSpriteIndex();
 
 		//---- Oam Data -------------------------------------------------------
 		//	All of the data necessary for setting the OAM is defined here.
@@ -33,7 +29,7 @@ class Sprite
 		//	classes, but it is necessary for setting the oam.
 		//--------------------------------------------------------------------
 		OamState* 			oam;
-		Position<float> 	pos;
+		Position<double> 	pos;
 		SpriteSize 			size;
 		SpriteColorFormat 	format;
 		u16* 				currentGfxFrame;
@@ -48,4 +44,7 @@ class Sprite
 							hflip		= false,
 							vflip		= false,
 							mosaic		= false;
+
+        friend class SpriteAnimator;
 };
+

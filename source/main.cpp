@@ -2,12 +2,9 @@
 #include <nds.h>
 #include <stdio.h>
 
-#ifndef SCREEN_BOUNDARIES
-#define SCREEN_BOUNDARIES
-    enum {SCREEN_TOP = 0, SCREEN_BOTTOM = 192, SCREEN_LEFT = 0, SCREEN_RIGHT = 256};
-#endif
-
-#include "MainCharacter.h"
+#include "Sprite.h"
+#include "SpriteAnimator.h"
+#include "MainCharacterSprite.h"
 #define FRAMES_PER_ANIMATION 3
 
 // git adds a nice header we can include to access the data
@@ -34,8 +31,9 @@ int main(void)
 	//-----------------------------------------------------------------
 	// Initialize sprites
 	//-----------------------------------------------------------------
-    MainCharacterSprite ManSprite2(0, 0, SpriteSize_32x32, SpriteColorFormat_256Color, &oamMain);
-    ManSprite2.Allocate((u8*)manTiles);
+    SpriteAnimator animator;
+    MainCharacterSprite ManSprite2(&oamMain, {0,0,0}, SpriteSize_32x32, SpriteColorFormat_256Color);
+    animator.Allocate(&ManSprite2, (u8*) manTiles);
 
     dmaCopy(manPal, SPRITE_PALETTE, manPalLen);
 
@@ -61,7 +59,7 @@ int main(void)
     int keys = 0;
     int sx = 0;
     int sy = 0;
-    int width = 512;
+    int width = 256;
     int height = 256;
 
     int j = 0;
@@ -104,7 +102,6 @@ int main(void)
 
         bgUpdate();
 
-        animateSprites();
         
 		// oamSet(&oamMain, 
 		// 	0, 
@@ -126,7 +123,8 @@ int main(void)
         oamUpdate(&oamSub);
 
         consoleClear();
-        iprintf("X, Y = %d, %d\n", ManSprite2.GetX(), ManSprite2.GetY());
+        animator.AnimateSprites();
+        iprintf("X, Y = %lf, %lf\n", ManSprite2.GetPosition().x, ManSprite2.GetPosition().y);
     }
     return 0;
 }
