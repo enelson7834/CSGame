@@ -3,6 +3,6 @@
 template <typename T>
 struct Rectangle
 {
-    public :
-        T topLeft, topRight, bottomLeft, bottomRight;
+    T x, y;
+    T width, height; 
 };

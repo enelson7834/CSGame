@@ -177,84 +177,109 @@ CollisionDirection MainCharacterSprite::DetectCollisionWithBackground(u8* collsi
                         // {5, 15}, // bottom right
                         // {2, 15} // bottom left
 
-    int topLeftTileX = (collisionRectangle.topLeft.x + this->pos.x) / tileWidth;
-    int topRightTileX = (collisionRectangle.topRight.x + this->pos.x) / tileWidth;
+    int top = (1 + this->pos.y) / tileHeight;
+    int bottom = (15 + this->pos.y) / tileHeight;
+    int left = (2 + this->pos.x) / tileWidth;
+    int right = (5 + this->pos.x) / tileWidth;
 
-    int topLeftTileY = (collisionRectangle.topLeft.y + this->pos.y) / tileHeight;
-    int topRightTileY = (collisionRectangle.topRight.y + this->pos.y) / tileHeight;
-
-    int bottomLeftTileX = (collisionRectangle.bottomLeft.x + this->pos.x) / tileWidth;
-    int bottomRightTileX = (collisionRectangle.bottomRight.x + this->pos.x) / tileWidth;
-
-    int bottomLeftTileY = (collisionRectangle.bottomLeft.y + this->pos.y) / tileHeight;
-    int bottomRightTileY = (collisionRectangle.bottomRight.y + this->pos.y) / tileHeight;
-        
+    int dIndexX = dX / tileWidth;
+    int dIndexY = dY / tileHeight;
+       
     // send a ray out from the points on the top of the player
     // and see if they collide with a tile.
     if(dY < 0) // sprite moving upward need to check top collision
     {
-        //stretch top to make sure sprite doesn't pass through objects because of move
-        for(int i = topLeftTileX; i <= topRightTileX; i++)
+        int tempYPos = this->pos.y + dY;
+        // look along the entire width of the sprite and check all tiles that it overlaps horizontally
+        // What if the sprite is between tiles and only half of it collides? We need to be able to detect this
+        for(int horizontalIndex = left; horizontalIndex <= right; horizontalIndex++)
         {
-            for(int j = topLeftTileY + (dY/tileHeight); j <= topLeftTileY; j++)
+            for(int verticalIndex = top; verticalIndex >= top + dIndexY; verticalIndex--)
             {
-                if(collsionMap[i + (j * mapWidth)] != 0)
+                if(collsionMap[horizontalIndex + (verticalIndex * mapWidth)] != 0)
                 {
                     returnVal.up = true;
-                    this->pos.y = i * tileHeight;
+                    tempYPos = std::max(tempYPos, verticalIndex * tileHeight);
                     dY = 0;
+                    break;
                 }
             }
+        }
+
+        if(returnVal.up == true)
+        {
+            this->pos.y = tempYPos;
         }
     } 
     if(dY > 0) // sprite moving down check collision
     {
-        for(int i = bottomLeftTileX; i <= bottomRightTileX; i++)
+        int tempYPos = this->pos.y + dY;
+        for(int horizontalIndex = left; horizontalIndex <= right; horizontalIndex++)
         {
-            for(int j = bottomLeftTileY; j <= bottomLeftTileY + (dY/tileHeight); j++)
+            for(int verticalIndex = bottom; verticalIndex <= bottom + dIndexY; verticalIndex++)
             {
-                if(collsionMap[i + (j * mapWidth)] != 0)
+                if(collsionMap[horizontalIndex + (verticalIndex * mapWidth)] != 0)
                 {
                     returnVal.down = true;
-                    this->pos.y = j * tileHeight;
+                    tempYPos = std::min(tempYPos, verticalIndex * tileHeight);
                     jumping = false;
                     dY = 0;
+                    break;
                 }
             }
         }
-    }
-    if(dX > 0) // sprite moving right
-    {
-        // check right side along all y coordinates (top is smaller than bottom)
-        for(int i = topRightTileY; i <= bottomRightTileY; i++)
+
+        if(returnVal.down == true)
         {
-            for(int j = topRightTileX - (dX / tileWidth); j <= topRightTileX; j++)
-            {
-                if(collsionMap[j + (i * mapWidth)] != 0)
-                {
-                    returnVal.right = true;
-                    this->pos.x = j * tileWidth;
-                    dX = 0;
-                }
-            }
+            this->pos.y = tempYPos;
         }
     }
     if(dX < 0) // sprite moving left
     {
-        for(int i = topLeftTileY; i <= bottomLeftTileY; i++)
+        int tempXPos = this->pos.x + dX;
+        for(int verticalIndex = top; verticalIndex <= bottom; verticalIndex++)
         {
-            for(int j = topLeftTileX; j <= topLeftTileX - (dX / tileWidth); j++)
+            for(int horizontalIndex = left; horizontalIndex >= left + dIndexX; horizontalIndex--)
             {    
-                if(collsionMap[j + (i * mapWidth)] != 0)
+                if(collsionMap[horizontalIndex + (verticalIndex * mapWidth)] != 0)
                 {
                     returnVal.left = true;
-                    this->pos.x = j * tileWidth;
+                    tempXPos = std::max(tempXPos, horizontalIndex * tileWidth);
                     dX = 0;
+                    break;
                 }
             }
         }
-    }
 
+        if(returnVal.left == true)
+        {
+            this->pos.x = tempXPos;
+        }
+    }
+    if(dX > 0) // sprite moving right
+    {
+        int tempXPos = this->pos.x + dX;
+        // check right side along all y coordinates (top is smaller than bottom)
+        for(int verticalIndex = top; verticalIndex <= bottom; verticalIndex++)
+        {
+            for(int horizontalIndex = right; horizontalIndex <= right + dIndexX; horizontalIndex++)
+            {
+                if(collsionMap[horizontalIndex + (verticalIndex * mapWidth)] != 0)
+                {
+                    returnVal.right = true;
+                    tempXPos = std::min(tempXPos, horizontalIndex * tileWidth);
+                    dX = 0;
+                    break;
+                }
+            }
+        }
+
+        if(returnval.right == true)
+        {
+            this->pos.x = tempXPos;
+        }
+    }
+    
     return returnVal;
 }
 
