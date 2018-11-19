@@ -17,6 +17,7 @@ class Sprite
 
 	protected:
 		int FindFreeSpriteIndex();
+        virtual void SetSpriteWidthAndHeight(SpriteSize size);
     	virtual void SetOam();
 
         virtual void KillSprite() = 0;
@@ -37,7 +38,9 @@ class Sprite
 		int 				oamId,
 							priority		= 0, 	
 							palette_alpha	= 0,
-							affineIndex		= -1;
+							affineIndex		= -1,
+                            spriteWidth     = 0,
+                            spriteHeight    = 0;
 
 		bool				sizeDouble	= false,
 							alive		= true,	// alias for hide
@@ -47,4 +50,3 @@ class Sprite
 
         friend class SpriteAnimator;
 };
-

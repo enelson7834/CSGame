@@ -4,7 +4,8 @@
 Sprite::Sprite(	OamState* oam, 
 				Position<double> p, 
 				SpriteSize size, 
-				SpriteColorFormat format) {
+				SpriteColorFormat format) 
+{
 	this->pos = p;
 	this->size = size;
 	this->format = format;
@@ -35,6 +36,60 @@ void Sprite::SetOam()
 				this->mosaic);
 }
 
+void Sprite::SetSpriteWidthAndHeight(SpriteSize size)
+{
+    switch (size)
+    {
+        case SpriteSize_8x8:
+            spriteWidth = 8;
+            spriteHeight = 8;
+            break;
+        case SpriteSize_8x16:
+            spriteWidth = 8;
+            spriteHeight = 16;
+            break;
+        case SpriteSize_16x8:
+            spriteWidth = 16;
+            spriteHeight = 8;
+            break;
+        case SpriteSize_8x32:
+            spriteWidth = 8;
+            spriteHeight = 32;
+            break;
+        case SpriteSize_32x8:
+            spriteWidth = 32;
+            spriteHeight = 8;
+            break;
+        case SpriteSize_16x16:
+            spriteWidth = 16;
+            spriteHeight = 16;
+            break;
+        case SpriteSize_16x32:
+            spriteWidth = 16;
+            spriteHeight = 32;
+            break;
+        case SpriteSize_32x16:
+            spriteWidth = 32;
+            spriteHeight = 16;
+            break;
+        case SpriteSize_32x32:
+            spriteWidth = 32;
+            spriteHeight = 32;
+            break;
+        case SpriteSize_32x64:
+            spriteWidth = 32;
+            spriteHeight = 64;
+            break;
+        case SpriteSize_64x32:
+            spriteWidth = 64;
+            spriteHeight = 32;
+            break;
+        case SpriteSize_64x64:
+            spriteWidth = 64;
+            spriteHeight = 64;
+            break;
+    }
+}
 // //sprite deconstructor
 // void killSprite(mySprite& s) {
 // 	s.alive = false;  

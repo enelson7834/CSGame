@@ -64,8 +64,13 @@ main.o: D:/Users/Eugene/Downloads/CSGame/CSGame/source/main.cpp \
  D:/Users/Eugene/Downloads/CSGame/CSGame/include/enums.h \
  D:/Users/Eugene/Downloads/CSGame/CSGame/include/SpriteAnimator.h \
  D:/Users/Eugene/Downloads/CSGame/CSGame/include/MainCharacterSprite.h \
+ D:/Users/Eugene/Downloads/CSGame/CSGame/include/CollisionDirection.h \
+ D:/Users/Eugene/Downloads/CSGame/CSGame/include/Rectangle.h \
+ D:/Users/Eugene/Downloads/CSGame/CSGame/build/untitled.h \
+ D:/Users/Eugene/Downloads/CSGame/CSGame/build/BlueMan.h \
  D:/Users/Eugene/Downloads/CSGame/CSGame/build/Background.h \
- D:/Users/Eugene/Downloads/CSGame/CSGame/build/man.h
+ D:/Users/Eugene/Downloads/CSGame/CSGame/build/man.h \
+ D:/Users/Eugene/Downloads/CSGame/CSGame/build/detective.h
 
 C:/devkitPro/libnds/include/nds.h:
 
@@ -197,6 +202,16 @@ D:/Users/Eugene/Downloads/CSGame/CSGame/include/SpriteAnimator.h:
 
 D:/Users/Eugene/Downloads/CSGame/CSGame/include/MainCharacterSprite.h:
 
+D:/Users/Eugene/Downloads/CSGame/CSGame/include/CollisionDirection.h:
+
+D:/Users/Eugene/Downloads/CSGame/CSGame/include/Rectangle.h:
+
+D:/Users/Eugene/Downloads/CSGame/CSGame/build/untitled.h:
+
+D:/Users/Eugene/Downloads/CSGame/CSGame/build/BlueMan.h:
+
 D:/Users/Eugene/Downloads/CSGame/CSGame/build/Background.h:
 
 D:/Users/Eugene/Downloads/CSGame/CSGame/build/man.h:
+
+D:/Users/Eugene/Downloads/CSGame/CSGame/build/detective.h:

@@ -1,0 +1,1 @@
+detective.o: detective.s
