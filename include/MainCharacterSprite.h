@@ -6,8 +6,7 @@
 #include <algorithm>
 
 #define TERMINAL_VELOCITY 1
-#define MAIN_CHARACTER_SPRITE_FRAME_COUNT 3
-
+#define MAIN_CHARACTER_SPRITE_FRAME_COUNT 1
 class MainCharacterSprite : public Sprite
 {
     public:

@@ -208,7 +208,7 @@ CollisionDirection MainCharacterSprite::DetectCollisionWithBackground(u8* collsi
 
         if(returnVal.up == true)
         {
-            this->pos.y = tempYPos;
+            this->pos.y = tempYPos - tileHeight;
         }
     } 
     if(dY > 0) // sprite moving down check collision
@@ -231,7 +231,7 @@ CollisionDirection MainCharacterSprite::DetectCollisionWithBackground(u8* collsi
 
         if(returnVal.down == true)
         {
-            this->pos.y = tempYPos;
+            this->pos.y = tempYPos - tileHeight;
         }
     }
     if(dX < 0) // sprite moving left
@@ -253,7 +253,7 @@ CollisionDirection MainCharacterSprite::DetectCollisionWithBackground(u8* collsi
 
         if(returnVal.left == true)
         {
-            this->pos.x = tempXPos;
+            this->pos.x = tempXPos - tileWidth;
         }
     }
     if(dX > 0) // sprite moving right
@@ -276,10 +276,10 @@ CollisionDirection MainCharacterSprite::DetectCollisionWithBackground(u8* collsi
 
         if(returnval.right == true)
         {
-            this->pos.x = tempXPos;
+            this->pos.x = tempXPos - tileWidth;
         }
     }
-    
+
     return returnVal;
 }
 
