@@ -5,18 +5,16 @@
 #include "Sprite.h"
 #include "SpriteAnimator.h"
 #include "MainCharacterSprite.h"
-#define FRAMES_PER_ANIMATION 3
 
 // git adds a nice header we can include to access the data
 // this has the same name as the image
-#include "untitled.h"
-#include "BlueMan.h"
+#include "knight.h"
 #include "Background.h"
-#include "man.h"
-#include "detective.h"
+#include "ForestBackground.h"
 
 int main(void)
 {
+    touchPosition touch;
 	//-----------------------------------------------------------------
 	// Initialize the graphics engines
 	//-----------------------------------------------------------------
@@ -33,10 +31,10 @@ int main(void)
 	// Initialize sprites
 	//-----------------------------------------------------------------
     SpriteAnimator animator;
-    MainCharacterSprite MainCharacter(&oamMain, {0,0}, SpriteSize_8x16, SpriteColorFormat_256Color);
-    animator.Allocate(&MainCharacter, (u8*) BlueManTiles);
+    MainCharacterSprite MainCharacter(&oamMain, {0,0}, SpriteSize_16x32, SpriteColorFormat_256Color);
+    animator.Allocate(&MainCharacter, (u8*) knightTiles);
 
-    dmaCopy(BlueManPal, SPRITE_PALETTE, BlueManPalLen);
+    dmaCopy(knightPal, SPRITE_PALETTE, knightPalLen);
 
     // set the mode for 2 text layers and two extended background layers
 
@@ -47,11 +45,18 @@ int main(void)
 
     //dmaCopy(detectivePal, SPRITE_PALETTE, detectivePalLen);
 
-    int bg0 = bgInit(2, BgType_Text8bpp, BgSize_T_256x256, 0, 1);
+	//make sure the floor is on the bottom (by default hardware layer 0 will be rendered last)
+    int bg0 = bgInit(2, BgType_Text8bpp, BgSize_T_256x256, 0, 1); // collision layer
+    //int bg1 = bgInit(1, BgType_Text8bpp, BgSize_T_256x256, 1, 2);
+
+    //bgSetPriority(bg1, 1);
 
     dmaCopy(BackgroundTiles, bgGetGfxPtr(bg0), BackgroundTilesLen);
     dmaCopy(BackgroundMap, bgGetMapPtr(bg0), BackgroundMapLen);
     dmaCopy(BackgroundPal, BG_PALETTE, BackgroundPalLen);
+
+    //dmaCopy(ForestBackgroundTiles, bgGetGfxPtr(bg1), ForestBackgroundTilesLen);
+    //dmaCopy(ForestBackgroundMap, bgGetMapPtr(bg1), ForestBackgroundMapLen);
 
 //    scroll(bg3, 256, 256);
 
@@ -63,21 +68,21 @@ int main(void)
     int width = 256;
     int height = 256;
 
-    int j = 0;
-
     while(!(keys & KEY_B))
     { 
-        j++;
-        j %= BackgroundTilesLen;
         scanKeys();
 
         keys = keysHeld();
 
-        Position<int> scroll = {0, 0};
-        MainCharacter.MoveSprite(keys, (u8*) BackgroundMap, 32, scroll);
+        if(keys & KEY_TOUCH) 
+        {
+            touchRead(&touch);
+        }
+
+        Position<int> scroll = {sx, sy};
         double SpriteX = MainCharacter.GetPosition().x;
         double SpriteY = MainCharacter.GetPosition().y;
-        sx = (int) SpriteX;
+        sx = (int) SpriteX + 16;
         sy = (int) SpriteY;
 
 
@@ -87,13 +92,13 @@ int main(void)
         //animateSprites();
     
         if(sx < 0) sx = 0;
-        if(sx >= width - 256) sx = width - 256;
+        if(sx >= width - 256) sx = width - 256 - 1;
         if(sy < 0) sy = 0;
-        if(sy >= height - 192) sy = height - 192;
+        if(sy >= height - 192) sy = height - 192 - 1;
 
-        bgScroll(bg0, sx, sy);
+        bgSetScroll(bg0, sx, sy);
 
-        //bgUpdate();
+        bgUpdate();
 
         
 		// oamSet(&oamMain, 
@@ -116,47 +121,15 @@ int main(void)
         oamUpdate(&oamSub);
 
 
-        unsigned short backgroundTileIndex = 0;
-        backgroundTileIndex = BackgroundMap[(int)(SpriteX/8) + ((int)(SpriteY/8) * 32)];
+        //unsigned short backgroundTileIndex = 0;
+        //backgroundTileIndex = BackgroundMap[(int)(SpriteX/8) + ((int)(SpriteY/8) * 32)];
 
         consoleClear();
+        iprintf("Scroll : %d, %d\n", sx, sy);
+        iprintf("Touch x, y = %d, %d", touch.px, touch.py);
+        MainCharacter.MoveSprite(keys, BackgroundMap, 32, scroll);
+
         animator.AnimateSprites();
-        iprintf("X, Y = %d, %d\n", sx, sy);
-        iprintf("Background Tile index @ x, y: %d\n", backgroundTileIndex);
     }
     return 0;
-}
-
-void scroll(int id, int width, int height)
-{
-   int keys = 0;
-   int sx = 0;
-   int sy = 0;
-
-   while(!(keys & KEY_B))
-   {
-      scanKeys();
-
-      keys = keysHeld();
-
-      if(keys & KEY_UP) sy--;
-      if(keys & KEY_DOWN) sy++;
-      if(keys & KEY_LEFT) sx--;
-      if(keys & KEY_RIGHT) sx++;
-
-      if(sx < 0) sx = 0;
-      if(sx >= width - 256) sx = width - 1 - 256;
-      if(sy < 0) sy = 0;
-      if(sy >= height - 192) sy = height - 1 - 192;
-
-      swiWaitForVBlank();
-
-      bgSetScroll(id, sx, sy);
-
-	  bgUpdate();
-
-      consoleClear();
-      iprintf("Scroll x: %d Scroll y: %d\n", sx, sy);
-      iprintf("Press 'B' to exit");
-   }
 }

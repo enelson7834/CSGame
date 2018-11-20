@@ -1,0 +1,1 @@
+knight.o: knight.s

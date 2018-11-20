@@ -2,11 +2,9 @@
 
 #include "Sprite.h"
 #include "CollisionDirection.h"
-#include "Rectangle.h"
 #include <algorithm>
 
-#define TERMINAL_VELOCITY 1
-#define MAIN_CHARACTER_SPRITE_FRAME_COUNT 1
+#define MAIN_CHARACTER_SPRITE_FRAME_COUNT 12
 class MainCharacterSprite : public Sprite
 {
     public:
@@ -16,7 +14,7 @@ class MainCharacterSprite : public Sprite
                                 SpriteColorFormat format);
         ~MainCharacterSprite();
 
-    void MoveSprite(int keys, u8* collisionMap, int mapWidth, Position<int> scroll);
+    void MoveSprite(int keys, const unsigned short * collisionMap, int mapWidth, Position<int> scroll);
 
     private:
         void Jump();
@@ -27,7 +25,7 @@ class MainCharacterSprite : public Sprite
         void Animate();
         void KillSprite();
         void Allocate(const u8* gfx_mem);
-        CollisionDirection DetectCollisionWithBackground(u8* collsionMap, int mapWidth, Position<int> scroll);
+        CollisionDirection DetectCollisionWithBackground(const unsigned short * collsionMap, int mapWidth, Position<int> scroll);
 
         const int tileWidth = 8;
         const int tileHeight = 8;
@@ -35,13 +33,6 @@ class MainCharacterSprite : public Sprite
 		SpriteState     state = W_UP;
 
         u16*            sprite_gfx_mem[MAIN_CHARACTER_SPRITE_FRAME_COUNT];
-
-        Rectangle<Position<int>>   collisionRectangle = {
-                        {2, 1}, // top left
-                        {5, 1}, // top right
-                        {5, 15}, // bottom right
-                        {2, 15} // bottom left
-        };
 
         float           dX, dY, 
                         maxSpeedX,

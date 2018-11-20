@@ -1,4 +1,5 @@
 #include "MainCharacterSprite.h"
+#include <stdio.h>
 
 //---- Constructor/Destructor -------------------------------------------------
 //  
@@ -16,14 +17,14 @@ MainCharacterSprite::MainCharacterSprite(   OamState* oam,
 
     // Set acceleration and speed
     this->dX = this->dY = 0;
-    this->maxSpeedX = 3;
-    this->maxSpeedY = 10;
+    this->maxSpeedX = 2;
+    this->maxSpeedY = 8;
 
-    this->accX = 0.2;
+    this->accX = 0.05;
     this->decX = 0.3; // should stop faster than it starts.
 
     // Set jump and gravity force
-    this->jumpStartSpeedY = 8;
+    this->jumpStartSpeedY = 7;
     accY = 0.5;
 
     this->jumping = false;
@@ -54,17 +55,31 @@ void MainCharacterSprite::Allocate(const u8 *gfx_mem)
 
 void MainCharacterSprite::Animate() 
 {
-    // anim_frame++;
-    // if( anim_frame >= 9 ) {
-    //     anim_frame = 0;
-    // }
-	gfx_frame = (int)anim_frame;// + this->state * 3;
+    anim_frame++;
+    switch (state)
+    {
+        case W_RIGHT:
+        case W_LEFT:
+            if( anim_frame >= 40 ) {
+                anim_frame = 0;
+            }
+            gfx_frame = anim_frame/5 + 4;
+            break;
+        case IDLE:
+        default:
+            if( anim_frame >= 60 ) {
+                anim_frame = 0;
+            }
+            gfx_frame = anim_frame / 15;
+            break;
+    }
+
 
     this->currentGfxFrame = this->sprite_gfx_mem[gfx_frame];
     this->SetOam();
 }
 
-void MainCharacterSprite::MoveSprite(int keys, u8* collisionMap, int mapWidth, Position<int> scroll) 
+void MainCharacterSprite::MoveSprite(int keys, const unsigned short * collisionMap, int mapWidth, Position<int> scroll) 
 {
     moveKeyDown = false;
 
@@ -134,22 +149,41 @@ void MainCharacterSprite::Jump()
     jumping = true;
     jumpKeyDown = true;
     dY = -jumpStartSpeedY;
-    state = W_UP;
+
+    //state = W_UP;
 }
 void MainCharacterSprite::Crouch() 
 {
-    state = W_DOWN;
+    //state = W_DOWN;
 }
 void MainCharacterSprite::MoveLeft() 
 {
+    if(dX > 0) // make turning faster
+    {
+        dX -= decX;
+    }
     dX -= accX;
+
+    if(state != W_LEFT)
+    {
+        anim_frame = 0;
+    }
 
     state = W_LEFT;
     this->hflip = true;
 }
 void MainCharacterSprite::MoveRight() 
 {
+    if(dX < 0) // make turning faster
+    {
+        dX += decX;
+    }
     dX += accX;
+
+    if(state != W_RIGHT)
+    {
+        anim_frame = 0;
+    }
 
     state = W_RIGHT;
     this->hflip = false;
@@ -164,11 +198,17 @@ void MainCharacterSprite::Idle()
     if(dX > 0 && dX < decX) dX = 0;
     if(dX < 0 && dX > -decX) dX = 0;
 
+    if(state != IDLE)
+    {
+        anim_frame = 0;
+    }
+
+    state = IDLE;
     //anim_frame--;
 }
 // End memory allocation/movement
 
-CollisionDirection MainCharacterSprite::DetectCollisionWithBackground(u8* collsionMap, int mapWidth, Position<int> scroll)
+CollisionDirection MainCharacterSprite::DetectCollisionWithBackground(const unsigned short *collsionMap, int mapWidth, Position<int> scroll)
 {
     CollisionDirection returnVal;
 
@@ -177,10 +217,10 @@ CollisionDirection MainCharacterSprite::DetectCollisionWithBackground(u8* collsi
                         // {5, 15}, // bottom right
                         // {2, 15} // bottom left
 
-    int top = (1 + this->pos.y) / tileHeight;
-    int bottom = (15 + this->pos.y) / tileHeight;
-    int left = (2 + this->pos.x) / tileWidth;
-    int right = (5 + this->pos.x) / tileWidth;
+    int top = (2 + this->pos.y + scroll.y) / tileHeight;
+    int bottom = (30 + this->pos.y + scroll.y) / tileHeight;
+    int left = (2 + this->pos.x + scroll.x) / tileWidth;
+    int right = (14 + this->pos.x + scroll.x) / tileWidth;
 
     int dIndexX = dX / tileWidth;
     int dIndexY = dY / tileHeight;
@@ -189,18 +229,17 @@ CollisionDirection MainCharacterSprite::DetectCollisionWithBackground(u8* collsi
     // and see if they collide with a tile.
     if(dY < 0) // sprite moving upward need to check top collision
     {
-        int tempYPos = this->pos.y + dY;
+        int tempYPos = 0;
         // look along the entire width of the sprite and check all tiles that it overlaps horizontally
         // What if the sprite is between tiles and only half of it collides? We need to be able to detect this
         for(int horizontalIndex = left; horizontalIndex <= right; horizontalIndex++)
         {
-            for(int verticalIndex = top; verticalIndex >= top + dIndexY; verticalIndex--)
+            for(int verticalIndex = top; verticalIndex >= top + dIndexY - 1; verticalIndex--)
             {
                 if(collsionMap[horizontalIndex + (verticalIndex * mapWidth)] != 0)
                 {
                     returnVal.up = true;
-                    tempYPos = std::max(tempYPos, verticalIndex * tileHeight);
-                    dY = 0;
+                    tempYPos = std::max(tempYPos, (verticalIndex + 1) * tileHeight - scroll.y);
                     break;
                 }
             }
@@ -208,22 +247,25 @@ CollisionDirection MainCharacterSprite::DetectCollisionWithBackground(u8* collsi
 
         if(returnVal.up == true)
         {
-            this->pos.y = tempYPos - tileHeight;
+            if(this->pos.y + dY <= tempYPos)
+            {
+                this->pos.y = tempYPos + 1;
+                dY = 0;
+            }
         }
     } 
     if(dY > 0) // sprite moving down check collision
     {
-        int tempYPos = this->pos.y + dY;
+        int tempYPos = 192;
         for(int horizontalIndex = left; horizontalIndex <= right; horizontalIndex++)
         {
-            for(int verticalIndex = bottom; verticalIndex <= bottom + dIndexY; verticalIndex++)
+            for(int verticalIndex = bottom; verticalIndex <= bottom + dIndexY + 1; verticalIndex++)
             {
                 if(collsionMap[horizontalIndex + (verticalIndex * mapWidth)] != 0)
                 {
                     returnVal.down = true;
-                    tempYPos = std::min(tempYPos, verticalIndex * tileHeight);
+                    tempYPos = std::min(tempYPos, (verticalIndex - 1) * tileHeight - scroll.y);
                     jumping = false;
-                    dY = 0;
                     break;
                 }
             }
@@ -231,21 +273,24 @@ CollisionDirection MainCharacterSprite::DetectCollisionWithBackground(u8* collsi
 
         if(returnVal.down == true)
         {
-            this->pos.y = tempYPos - tileHeight;
+            if(this->pos.y + dY >= tempYPos - spriteHeight + tileHeight)
+            {
+                this->pos.y = tempYPos - spriteHeight + tileHeight;
+                dY = 0;
+            }
         }
     }
     if(dX < 0) // sprite moving left
     {
-        int tempXPos = this->pos.x + dX;
+        int tempXPos = 0;
         for(int verticalIndex = top; verticalIndex <= bottom; verticalIndex++)
         {
-            for(int horizontalIndex = left; horizontalIndex >= left + dIndexX; horizontalIndex--)
+            for(int horizontalIndex = left; horizontalIndex >= left + dIndexX - 1; horizontalIndex--)
             {    
                 if(collsionMap[horizontalIndex + (verticalIndex * mapWidth)] != 0)
                 {
                     returnVal.left = true;
-                    tempXPos = std::max(tempXPos, horizontalIndex * tileWidth);
-                    dX = 0;
+                    tempXPos = std::max(tempXPos, (horizontalIndex + 1) * tileWidth - scroll.x);
                     break;
                 }
             }
@@ -253,33 +298,40 @@ CollisionDirection MainCharacterSprite::DetectCollisionWithBackground(u8* collsi
 
         if(returnVal.left == true)
         {
-            this->pos.x = tempXPos - tileWidth;
+            if(this->pos.x + dX <= tempXPos)
+            {
+                this->pos.x = tempXPos;
+                dX = 0;
+            }
         }
     }
     if(dX > 0) // sprite moving right
     {
-        int tempXPos = this->pos.x + dX;
+        int tempXPos = 256;
         // check right side along all y coordinates (top is smaller than bottom)
         for(int verticalIndex = top; verticalIndex <= bottom; verticalIndex++)
         {
-            for(int horizontalIndex = right; horizontalIndex <= right + dIndexX; horizontalIndex++)
+            for(int horizontalIndex = right; horizontalIndex <= right + dIndexX + 1; horizontalIndex++)
             {
                 if(collsionMap[horizontalIndex + (verticalIndex * mapWidth)] != 0)
                 {
                     returnVal.right = true;
-                    tempXPos = std::min(tempXPos, horizontalIndex * tileWidth);
-                    dX = 0;
+                    tempXPos = std::min(tempXPos, (horizontalIndex - 1) * tileWidth - scroll.x);
                     break;
                 }
             }
         }
 
-        if(returnval.right == true)
+        if(returnVal.right == true)
         {
-            this->pos.x = tempXPos - tileWidth;
+            if(this->pos.x + dX >= tempXPos - spriteWidth + tileWidth)
+            {
+                this->pos.x = tempXPos - spriteWidth + tileWidth;
+                dX = 0;
+            }
         }
     }
-
+ 
     return returnVal;
 }
 

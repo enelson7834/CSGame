@@ -64,8 +64,7 @@ MainCharacterSprite.o: \
  C:/devkitPro/libnds/include/nds/arm9/nand.h \
  D:/Users/Eugene/Downloads/CSGame/CSGame/include/Position.h \
  D:/Users/Eugene/Downloads/CSGame/CSGame/include/enums.h \
- D:/Users/Eugene/Downloads/CSGame/CSGame/include/CollisionDirection.h \
- D:/Users/Eugene/Downloads/CSGame/CSGame/include/Rectangle.h
+ D:/Users/Eugene/Downloads/CSGame/CSGame/include/CollisionDirection.h
 
 D:/Users/Eugene/Downloads/CSGame/CSGame/include/MainCharacterSprite.h:
 
@@ -196,5 +195,3 @@ D:/Users/Eugene/Downloads/CSGame/CSGame/include/Position.h:
 D:/Users/Eugene/Downloads/CSGame/CSGame/include/enums.h:
 
 D:/Users/Eugene/Downloads/CSGame/CSGame/include/CollisionDirection.h:
-
-D:/Users/Eugene/Downloads/CSGame/CSGame/include/Rectangle.h:
