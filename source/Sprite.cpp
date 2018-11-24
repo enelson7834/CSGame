@@ -17,6 +17,11 @@ Position<double> Sprite::GetPosition()
 	return this->pos;
 }
 
+void Sprite::SetPosition(Position<double> p)
+{
+    pos = p;
+}
+
 void Sprite::SetOam()
 {
     //void oamSet(OamState *oam, int id, int x, int y, int priority, int palette_alpha, SpriteSize size, SpriteColorFormat format, const void *gfxOffset, int affineIndex, bool sizeDouble, bool hide, bool hflip, bool vflip, bool mosaic)	

@@ -14,6 +14,8 @@ class Sprite
 		Sprite(OamState* oam, Position<double> p, SpriteSize size, SpriteColorFormat format);
 
 		Position<double> GetPosition();
+		void SetPosition(Position<double> p);
+
 
 	protected:
 		int FindFreeSpriteIndex();
@@ -48,5 +50,11 @@ class Sprite
 							vflip		= false,
 							mosaic		= false;
 
+		//---- Friend Class ---------------------------------------------------	
+		//	Animator class is responsible for managing all of the active 
+		//	sprites and animating them. Main loop is responsible for
+		//	moving sprites.
+		//--------------------------------------------------------------------
         friend class SpriteAnimator;
+		
 };

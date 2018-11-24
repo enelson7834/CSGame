@@ -15,6 +15,8 @@ class MainCharacterSprite : public Sprite
         ~MainCharacterSprite();
 
     void MoveSprite(int keys, const unsigned short * collisionMap, int mapWidth, Position<int> scroll);
+    float GetVelocityY();
+    float GetVelocityX();
 
     private:
         void Jump();

@@ -74,7 +74,6 @@ void MainCharacterSprite::Animate()
             break;
     }
 
-
     this->currentGfxFrame = this->sprite_gfx_mem[gfx_frame];
     this->SetOam();
 }
@@ -141,6 +140,14 @@ void MainCharacterSprite::MoveSprite(int keys, const unsigned short * collisionM
 
 }
 
+float MainCharacterSprite::GetVelocityX()
+{
+    return dX;
+}
+float MainCharacterSprite::GetVelocityY()
+{
+    return dY;
+}
 //---- Main character sprite movement -----------------------------------------
 //  
 //-----------------------------------------------------------------------------
@@ -270,7 +277,6 @@ CollisionDirection MainCharacterSprite::DetectCollisionWithBackground(const unsi
                 }
             }
         }
-
         if(returnVal.down == true)
         {
             if(this->pos.y + dY >= tempYPos - spriteHeight + tileHeight)

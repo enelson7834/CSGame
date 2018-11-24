@@ -46,7 +46,7 @@ int main(void)
     //dmaCopy(detectivePal, SPRITE_PALETTE, detectivePalLen);
 
 	//make sure the floor is on the bottom (by default hardware layer 0 will be rendered last)
-    int bg0 = bgInit(2, BgType_Text8bpp, BgSize_T_256x256, 0, 1); // collision layer
+    int bg0 = bgInit(2, BgType_Text8bpp, BgSize_T_512x512, 0, 1); // collision layer
     //int bg1 = bgInit(1, BgType_Text8bpp, BgSize_T_256x256, 1, 2);
 
     //bgSetPriority(bg1, 1);
@@ -63,10 +63,14 @@ int main(void)
     consoleDemoInit();
 
     int keys = 0;
-    int sx = 0;
-    int sy = 0;
-    int width = 256;
-    int height = 256;
+    float sx = 0;
+    float sy = 0;
+    int width = 512;
+    int height = 512; 
+
+    int i = 0;
+    int j = 0;
+
 
     while(!(keys & KEY_B))
     { 
@@ -82,24 +86,43 @@ int main(void)
         Position<int> scroll = {sx, sy};
         double SpriteX = MainCharacter.GetPosition().x;
         double SpriteY = MainCharacter.GetPosition().y;
-        sx = (int) SpriteX + 16;
-        sy = (int) SpriteY;
 
+        float dx = MainCharacter.GetVelocityX();
+        float dy = MainCharacter.GetVelocityY();
 
-        // ManSprite.anim_frame++;
-        // if (ManSprite.anim_frame >= FRAMES_PER_ANIMATION) ManSprite.anim_frame = 0;
-        // animateMan(&ManSprite);
-        //animateSprites();
-    
-        if(sx < 0) sx = 0;
-        if(sx >= width - 256) sx = width - 256 - 1;
-        if(sy < 0) sy = 0;
-        if(sy >= height - 192) sy = height - 192 - 1;
+        if(dx != 0)
+        {
+            sx += dx;
 
-        bgSetScroll(bg0, sx, sy);
+            if(SpriteX - dx < 117 || sx < 0) sx = 0;
+            if(sx > 0 && sx < width - 256 && SpriteX - dx >= 117 && SpriteX - dx < 123)
+            {
+                SpriteX = 120;
+            }
+            if(SpriteX - dx >= 123 || sx > width - 256)
+            {
+                sx = width - 256;
+            }
+        }
+        if(dy != 0)
+        {
+            sy += dy;
+                
+            if(SpriteY - dy < 93) sy = 0;
+            if(sy >= 0 && sy < height - 192 && SpriteY - dy >= 93 && SpriteY - dy < 95)
+            {
+                SpriteY = 94;
+            }
+            if(SpriteY - dy >= 95)
+            {
+                sy = height - 192;
+            }
+        }
+
+        MainCharacter.SetPosition({SpriteX, SpriteY});
+        bgSetScroll(bg0, (int) sx, (int) sy);
 
         bgUpdate();
-
         
 		// oamSet(&oamMain, 
 		// 	0, 
@@ -118,16 +141,24 @@ int main(void)
 
         swiWaitForVBlank();
         oamUpdate(&oamMain);
+
         oamUpdate(&oamSub);
 
-
-        //unsigned short backgroundTileIndex = 0;
-        //backgroundTileIndex = BackgroundMap[(int)(SpriteX/8) + ((int)(SpriteY/8) * 32)];
-
         consoleClear();
-        iprintf("Scroll : %d, %d\n", sx, sy);
+        MainCharacter.MoveSprite(keys, BackgroundMap, width/8, scroll);
+        iprintf("X, Y = %d, %d\n", (int)SpriteX, (int)SpriteY);
+        iprintf("Scroll : %d, %d\n", (int)sx, (int)sy);
         iprintf("Touch x, y = %d, %d", touch.px, touch.py);
-        MainCharacter.MoveSprite(keys, BackgroundMap, 32, scroll);
+    i++;
+        if(i > width/8)
+        {
+            j++;
+            i = 0;
+        }
+        if(j > height/8)
+        {
+            j = 0;
+        }
 
         animator.AnimateSprites();
     }

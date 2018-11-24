@@ -1,7 +1,6 @@
-SpriteAnimator.o: \
- D:/Users/Eugene/Downloads/CSGame/CSGame/source/SpriteAnimator.cpp \
- D:/Users/Eugene/Downloads/CSGame/CSGame/include/SpriteAnimator.h \
- D:/Users/Eugene/Downloads/CSGame/CSGame/include/Sprite.h \
+SpriteAnimator.o: C:/devkitPro/manual/CSGame/source/SpriteAnimator.cpp \
+ C:/devkitPro/manual/CSGame/include/SpriteAnimator.h \
+ C:/devkitPro/manual/CSGame/include/Sprite.h \
  C:/devkitPro/libnds/include/nds.h \
  C:/devkitPro/libnds/include/nds/libversion.h \
  C:/devkitPro/libnds/include/nds/ndstypes.h \
@@ -62,12 +61,12 @@ SpriteAnimator.o: \
  C:/devkitPro/libnds/include/nds/arm9/video.h \
  C:/devkitPro/libnds/include/nds/arm9/videoGL.h \
  C:/devkitPro/libnds/include/nds/arm9/nand.h \
- D:/Users/Eugene/Downloads/CSGame/CSGame/include/Position.h \
- D:/Users/Eugene/Downloads/CSGame/CSGame/include/enums.h
+ C:/devkitPro/manual/CSGame/include/Position.h \
+ C:/devkitPro/manual/CSGame/include/enums.h
 
-D:/Users/Eugene/Downloads/CSGame/CSGame/include/SpriteAnimator.h:
+C:/devkitPro/manual/CSGame/include/SpriteAnimator.h:
 
-D:/Users/Eugene/Downloads/CSGame/CSGame/include/Sprite.h:
+C:/devkitPro/manual/CSGame/include/Sprite.h:
 
 C:/devkitPro/libnds/include/nds.h:
 
@@ -189,6 +188,6 @@ C:/devkitPro/libnds/include/nds/arm9/videoGL.h:
 
 C:/devkitPro/libnds/include/nds/arm9/nand.h:
 
-D:/Users/Eugene/Downloads/CSGame/CSGame/include/Position.h:
+C:/devkitPro/manual/CSGame/include/Position.h:
 
-D:/Users/Eugene/Downloads/CSGame/CSGame/include/enums.h:
+C:/devkitPro/manual/CSGame/include/enums.h:
