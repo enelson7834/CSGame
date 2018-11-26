@@ -16,19 +16,19 @@ MainCharacterSprite::MainCharacterSprite(   OamState* oam,
 	this->oam = oam;
 
     // Set acceleration and speed
-    this->dX = this->dY = 0;
-    this->maxSpeedX = 2;
-    this->maxSpeedY = 8;
+    dX = dY = 0;
+    maxSpeedX = 2;
+    maxSpeedY = 8;
 
-    this->accX = 0.05;
-    this->decX = 0.3; // should stop faster than it starts.
+    accX = 0.05;
+    decX = 0.3; // should stop faster than it starts.
 
     // Set jump and gravity force
-    this->jumpStartSpeedY = 7;
+    jumpStartSpeedY = 7;
     accY = 0.5;
 
-    this->jumping = false;
-    this->jumpKeyDown = false;
+    jumping = false;
+    jumpKeyDown = false;
 
     SetSpriteWidthAndHeight(size);
 }
@@ -74,6 +74,7 @@ void MainCharacterSprite::Animate()
             break;
     }
 
+
     this->currentGfxFrame = this->sprite_gfx_mem[gfx_frame];
     this->SetOam();
 }
@@ -114,7 +115,7 @@ void MainCharacterSprite::MoveSprite(int keys, const unsigned short * collisionM
 
     dY += accY; // gravity
     
-    DetectCollisionWithBackground(collisionMap, mapWidth, scroll);
+    //DetectCollisionWithBackground(collisionMap, mapWidth, scroll);
     this->pos.y += dY;
     this->pos.x += dX;
 
@@ -140,14 +141,6 @@ void MainCharacterSprite::MoveSprite(int keys, const unsigned short * collisionM
 
 }
 
-float MainCharacterSprite::GetVelocityX()
-{
-    return dX;
-}
-float MainCharacterSprite::GetVelocityY()
-{
-    return dY;
-}
 //---- Main character sprite movement -----------------------------------------
 //  
 //-----------------------------------------------------------------------------
@@ -169,6 +162,7 @@ void MainCharacterSprite::MoveLeft()
     {
         dX -= decX;
     }
+
     dX -= accX;
 
     if(state != W_LEFT)
@@ -215,6 +209,15 @@ void MainCharacterSprite::Idle()
 }
 // End memory allocation/movement
 
+float MainCharacterSprite::GetVelocityX()
+{
+    return dX;
+}
+float MainCharacterSprite::GetVelocityY()
+{
+    return dY;
+}
+
 CollisionDirection MainCharacterSprite::DetectCollisionWithBackground(const unsigned short *collsionMap, int mapWidth, Position<int> scroll)
 {
     CollisionDirection returnVal;
@@ -243,7 +246,7 @@ CollisionDirection MainCharacterSprite::DetectCollisionWithBackground(const unsi
         {
             for(int verticalIndex = top; verticalIndex >= top + dIndexY - 1; verticalIndex--)
             {
-                if(collsionMap[horizontalIndex + (verticalIndex * mapWidth)] != 0)
+                if(collsionMap[horizontalIndex + (verticalIndex * 32)] != 0)
                 {
                     returnVal.up = true;
                     tempYPos = std::max(tempYPos, (verticalIndex + 1) * tileHeight - scroll.y);
@@ -268,7 +271,7 @@ CollisionDirection MainCharacterSprite::DetectCollisionWithBackground(const unsi
         {
             for(int verticalIndex = bottom; verticalIndex <= bottom + dIndexY + 1; verticalIndex++)
             {
-                if(collsionMap[horizontalIndex + (verticalIndex * mapWidth)] != 0)
+                if(collsionMap[horizontalIndex + (verticalIndex * 32)] != 0)
                 {
                     returnVal.down = true;
                     tempYPos = std::min(tempYPos, (verticalIndex - 1) * tileHeight - scroll.y);
@@ -277,6 +280,7 @@ CollisionDirection MainCharacterSprite::DetectCollisionWithBackground(const unsi
                 }
             }
         }
+
         if(returnVal.down == true)
         {
             if(this->pos.y + dY >= tempYPos - spriteHeight + tileHeight)
@@ -293,7 +297,7 @@ CollisionDirection MainCharacterSprite::DetectCollisionWithBackground(const unsi
         {
             for(int horizontalIndex = left; horizontalIndex >= left + dIndexX - 1; horizontalIndex--)
             {    
-                if(collsionMap[horizontalIndex + (verticalIndex * mapWidth)] != 0)
+                if(collsionMap[horizontalIndex + (verticalIndex * 32)] != 0)
                 {
                     returnVal.left = true;
                     tempXPos = std::max(tempXPos, (horizontalIndex + 1) * tileWidth - scroll.x);
@@ -319,7 +323,7 @@ CollisionDirection MainCharacterSprite::DetectCollisionWithBackground(const unsi
         {
             for(int horizontalIndex = right; horizontalIndex <= right + dIndexX + 1; horizontalIndex++)
             {
-                if(collsionMap[horizontalIndex + (verticalIndex * mapWidth)] != 0)
+                if(collsionMap[horizontalIndex + (verticalIndex * 32)] != 0)
                 {
                     returnVal.right = true;
                     tempXPos = std::min(tempXPos, (horizontalIndex - 1) * tileWidth - scroll.x);

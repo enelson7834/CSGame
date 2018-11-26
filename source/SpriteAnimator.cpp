@@ -38,6 +38,9 @@ void SpriteAnimator::AnimateSprites()
 	//set oam to values required by my sprite
 	for(u32 i = 0; i < allocationCount; i++) 
     {
-		sprites[i]->Animate();
-	}
+        if(sprites[i] != NULL)
+        {
+		    sprites[i]->Animate();
+        }
+    }
 }

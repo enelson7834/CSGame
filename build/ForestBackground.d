@@ -1,1 +1,0 @@
-ForestBackground.o: ForestBackground.s

@@ -1,5 +1,4 @@
 #pragma once
-#define ARM9
 
 #include <nds.h>
 #include "Position.h"
@@ -15,7 +14,6 @@ class Sprite
 
 		Position<double> GetPosition();
 		void SetPosition(Position<double> p);
-
 
 	protected:
 		int FindFreeSpriteIndex();

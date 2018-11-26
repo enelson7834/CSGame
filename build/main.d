@@ -1,4 +1,4 @@
-main.o: C:/devkitPro/manual/CSGame/source/main.cpp \
+main.o: D:/Users/Eugene/Downloads/CSGame/CSGame/source/main.cpp \
  C:/devkitPro/libnds/include/nds.h \
  C:/devkitPro/libnds/include/nds/libversion.h \
  C:/devkitPro/libnds/include/nds/ndstypes.h \
@@ -59,15 +59,20 @@ main.o: C:/devkitPro/manual/CSGame/source/main.cpp \
  C:/devkitPro/libnds/include/nds/arm9/video.h \
  C:/devkitPro/libnds/include/nds/arm9/videoGL.h \
  C:/devkitPro/libnds/include/nds/arm9/nand.h \
- C:/devkitPro/manual/CSGame/include/Sprite.h \
- C:/devkitPro/manual/CSGame/include/Position.h \
- C:/devkitPro/manual/CSGame/include/enums.h \
- C:/devkitPro/manual/CSGame/include/SpriteAnimator.h \
- C:/devkitPro/manual/CSGame/include/MainCharacterSprite.h \
- C:/devkitPro/manual/CSGame/include/CollisionDirection.h \
- C:/devkitPro/manual/CSGame/build/knight.h \
- C:/devkitPro/manual/CSGame/build/Background.h \
- C:/devkitPro/manual/CSGame/build/ForestBackground.h
+ D:/Users/Eugene/Downloads/CSGame/CSGame/include/Sprite.h \
+ D:/Users/Eugene/Downloads/CSGame/CSGame/include/Position.h \
+ D:/Users/Eugene/Downloads/CSGame/CSGame/include/enums.h \
+ D:/Users/Eugene/Downloads/CSGame/CSGame/include/SpriteAnimator.h \
+ D:/Users/Eugene/Downloads/CSGame/CSGame/include/MainCharacterSprite.h \
+ D:/Users/Eugene/Downloads/CSGame/CSGame/include/CollisionDirection.h \
+ D:/Users/Eugene/Downloads/CSGame/CSGame/include/PlayerProjectile.h \
+ D:/Users/Eugene/Downloads/CSGame/CSGame/include/EnemyProjectile.h \
+ D:/Users/Eugene/Downloads/CSGame/CSGame/include/Ghost.h \
+ D:/Users/Eugene/Downloads/CSGame/CSGame/include/Rectangle.h \
+ D:/Users/Eugene/Downloads/CSGame/CSGame/build/Untitled1.h \
+ D:/Users/Eugene/Downloads/CSGame/CSGame/build/knight.h \
+ D:/Users/Eugene/Downloads/CSGame/CSGame/build/Background.h \
+ D:/Users/Eugene/Downloads/CSGame/CSGame/build/Projectile.h
 
 C:/devkitPro/libnds/include/nds.h:
 
@@ -189,20 +194,30 @@ C:/devkitPro/libnds/include/nds/arm9/videoGL.h:
 
 C:/devkitPro/libnds/include/nds/arm9/nand.h:
 
-C:/devkitPro/manual/CSGame/include/Sprite.h:
+D:/Users/Eugene/Downloads/CSGame/CSGame/include/Sprite.h:
 
-C:/devkitPro/manual/CSGame/include/Position.h:
+D:/Users/Eugene/Downloads/CSGame/CSGame/include/Position.h:
 
-C:/devkitPro/manual/CSGame/include/enums.h:
+D:/Users/Eugene/Downloads/CSGame/CSGame/include/enums.h:
 
-C:/devkitPro/manual/CSGame/include/SpriteAnimator.h:
+D:/Users/Eugene/Downloads/CSGame/CSGame/include/SpriteAnimator.h:
 
-C:/devkitPro/manual/CSGame/include/MainCharacterSprite.h:
+D:/Users/Eugene/Downloads/CSGame/CSGame/include/MainCharacterSprite.h:
 
-C:/devkitPro/manual/CSGame/include/CollisionDirection.h:
+D:/Users/Eugene/Downloads/CSGame/CSGame/include/CollisionDirection.h:
 
-C:/devkitPro/manual/CSGame/build/knight.h:
+D:/Users/Eugene/Downloads/CSGame/CSGame/include/PlayerProjectile.h:
 
-C:/devkitPro/manual/CSGame/build/Background.h:
+D:/Users/Eugene/Downloads/CSGame/CSGame/include/EnemyProjectile.h:
 
-C:/devkitPro/manual/CSGame/build/ForestBackground.h:
+D:/Users/Eugene/Downloads/CSGame/CSGame/include/Ghost.h:
+
+D:/Users/Eugene/Downloads/CSGame/CSGame/include/Rectangle.h:
+
+D:/Users/Eugene/Downloads/CSGame/CSGame/build/Untitled1.h:
+
+D:/Users/Eugene/Downloads/CSGame/CSGame/build/knight.h:
+
+D:/Users/Eugene/Downloads/CSGame/CSGame/build/Background.h:
+
+D:/Users/Eugene/Downloads/CSGame/CSGame/build/Projectile.h:

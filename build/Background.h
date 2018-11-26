@@ -7,10 +7,10 @@
 //	Transparent color : 00,00,00
 //	+ palette 256 entries, not compressed
 //	+ 8 tiles (t|f reduced) not compressed
-//	+ regular map (flat), not compressed, 64x64 
+//	+ regular map (in SBBs), not compressed, 64x64 
 //	Total size: 512 + 512 + 8192 = 9216
 //
-//	Time-stamp: 2018-11-23, 17:47:56
+//	Time-stamp: 2018-11-24, 23:43:55
 //	Exported by Cearn's GBA Image Transmogrifier, v0.8.15
 //	( http://www.coranac.com/projects/#grit )
 //

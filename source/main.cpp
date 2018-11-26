@@ -1,19 +1,23 @@
-#define ARM9
 #include <nds.h>
 #include <stdio.h>
 
 #include "Sprite.h"
 #include "SpriteAnimator.h"
 #include "MainCharacterSprite.h"
+#include "PlayerProjectile.h"
+#include "EnemyProjectile.h"
+#include "Ghost.h"
 
 // git adds a nice header we can include to access the data
 // this has the same name as the image
+#include "Untitled1.h"
 #include "knight.h"
 #include "Background.h"
-#include "ForestBackground.h"
+#include "Projectile.h"
 
 int main(void)
 {
+    Ghost *Enemies[3];
     touchPosition touch;
 	//-----------------------------------------------------------------
 	// Initialize the graphics engines
@@ -22,7 +26,8 @@ int main(void)
     videoSetModeSub(MODE_0_2D);
 
     vramSetBankA(VRAM_A_MAIN_BG);
-    vramSetBankG(VRAM_G_MAIN_SPRITE);
+    vramSetBankB(VRAM_B_MAIN_SPRITE);
+    vramSetBankD(VRAM_D_SUB_SPRITE);
 
     oamInit(&oamMain, SpriteMapping_1D_128, false);
     oamInit(&oamSub, SpriteMapping_1D_128, false);
@@ -31,136 +36,87 @@ int main(void)
 	// Initialize sprites
 	//-----------------------------------------------------------------
     SpriteAnimator animator;
-    MainCharacterSprite MainCharacter(&oamMain, {0,0}, SpriteSize_16x32, SpriteColorFormat_256Color);
-    animator.Allocate(&MainCharacter, (u8*) knightTiles);
+    MainCharacterSprite MainCharacter1(&oamMain, {256/2,192-32}, SpriteSize_16x32, SpriteColorFormat_256Color);
+    animator.Allocate(&MainCharacter1, (u8*) Untitled1Tiles);
 
-    dmaCopy(knightPal, SPRITE_PALETTE, knightPalLen);
+    Ghost Enemy1(&oamMain, {0,0}, SpriteSize_16x32, SpriteColorFormat_256Color);
+    Ghost Enemy2(&oamMain, {0,0}, SpriteSize_16x32, SpriteColorFormat_256Color);
+    Ghost Enemy3(&oamMain, {0,0}, SpriteSize_16x32, SpriteColorFormat_256Color);
 
-    // set the mode for 2 text layers and two extended background layers
+    animator.Allocate(&Enemy1, (u8*) Untitled1Tiles);
+    animator.Allocate(&Enemy2, (u8*) Untitled1Tiles);
+    animator.Allocate(&Enemy3, (u8*) Untitled1Tiles);
+    
+    animator.Allocate(&Enemy1.projectile, (u8*) Untitled1Tiles);
+    animator.Allocate(&Enemy2.projectile, (u8*) Untitled1Tiles);
+    animator.Allocate(&Enemy3.projectile, (u8*) Untitled1Tiles);
 
-    // vramSetBankB(VRAM_B_MAIN_BG);
-    // vramSetBankC(VRAM_C_MAIN_BG);
-    // vramSetBankD(VRAM_D_MAIN_BG);
-    // vramSetBankG(VRAM_G_MAIN_SPRITE);
+    Enemies[0] = &Enemy1;
+    Enemies[1] = &Enemy2;
+    Enemies[2] = &Enemy3;
 
-    //dmaCopy(detectivePal, SPRITE_PALETTE, detectivePalLen);
+    dmaCopy(Untitled1Pal, SPRITE_PALETTE, Untitled1PalLen);
+    dmaCopy(Untitled1Pal, SPRITE_PALETTE_SUB, Untitled1PalLen);
 
-	//make sure the floor is on the bottom (by default hardware layer 0 will be rendered last)
-    int bg0 = bgInit(2, BgType_Text8bpp, BgSize_T_512x512, 0, 1); // collision layer
-    //int bg1 = bgInit(1, BgType_Text8bpp, BgSize_T_256x256, 1, 2);
-
-    //bgSetPriority(bg1, 1);
-
-    dmaCopy(BackgroundTiles, bgGetGfxPtr(bg0), BackgroundTilesLen);
-    dmaCopy(BackgroundMap, bgGetMapPtr(bg0), BackgroundMapLen);
-    dmaCopy(BackgroundPal, BG_PALETTE, BackgroundPalLen);
-
-    //dmaCopy(ForestBackgroundTiles, bgGetGfxPtr(bg1), ForestBackgroundTilesLen);
-    //dmaCopy(ForestBackgroundMap, bgGetMapPtr(bg1), ForestBackgroundMapLen);
-
-//    scroll(bg3, 256, 256);
-
-    consoleDemoInit();
+    PlayerProjectile p1({0,0}, SpriteSize_16x16, SpriteColorFormat_256Color);
+    animator.Allocate(&p1, (u8*) Untitled1Tiles);
 
     int keys = 0;
-    float sx = 0;
-    float sy = 0;
-    int width = 512;
-    int height = 512; 
+    int enemySpawnCount = 1000; 
+    int enemyIndex = 0;
+    int projectileCount = 0;
+    bool PlayerProjectileCreated = false;
 
-    int i = 0;
-    int j = 0;
-
-
-    while(!(keys & KEY_B))
+    while(true)
     { 
+        enemySpawnCount++;
+        if(enemySpawnCount >= 1000)
+        {
+            enemySpawnCount = 0;
+            
+            enemyIndex++;
+            if(enemyIndex >= 4)
+            {
+                enemyIndex = 0;
+            }
+
+            Enemies[enemyIndex]->Spawn();
+        }
+
         scanKeys();
 
         keys = keysHeld();
 
-        if(keys & KEY_TOUCH) 
+        if(keys & KEY_TOUCH) // on touch charge projectile
         {
             touchRead(&touch);
+            if(!PlayerProjectileCreated)
+            {
+                // create PlayerProjectile
+                PlayerProjectileCreated = true;
+            }
+            p1.ChargeProjectile({touch.px, touch.py});
         }
-
-        Position<int> scroll = {sx, sy};
-        double SpriteX = MainCharacter.GetPosition().x;
-        double SpriteY = MainCharacter.GetPosition().y;
-
-        float dx = MainCharacter.GetVelocityX();
-        float dy = MainCharacter.GetVelocityY();
-
-        if(dx != 0)
+        else // on release fire projectile
         {
-            sx += dx;
-
-            if(SpriteX - dx < 117 || sx < 0) sx = 0;
-            if(sx > 0 && sx < width - 256 && SpriteX - dx >= 117 && SpriteX - dx < 123)
-            {
-                SpriteX = 120;
-            }
-            if(SpriteX - dx >= 123 || sx > width - 256)
-            {
-                sx = width - 256;
-            }
-        }
-        if(dy != 0)
-        {
-            sy += dy;
-                
-            if(SpriteY - dy < 93) sy = 0;
-            if(sy >= 0 && sy < height - 192 && SpriteY - dy >= 93 && SpriteY - dy < 95)
-            {
-                SpriteY = 94;
-            }
-            if(SpriteY - dy >= 95)
-            {
-                sy = height - 192;
-            }
+            p1.ReleaseProjectile();
         }
 
-        MainCharacter.SetPosition({SpriteX, SpriteY});
-        bgSetScroll(bg0, (int) sx, (int) sy);
+        MainCharacter1.MoveSprite(keys, BackgroundMap, 0, {0,0});
+        Enemy1.MoveSprite(NULL, {MainCharacter1.GetPosition().x, MainCharacter1.GetPosition().y});
+        Enemy2.MoveSprite(NULL, {MainCharacter1.GetPosition().x, MainCharacter1.GetPosition().y});
+        Enemy3.MoveSprite(NULL, {MainCharacter1.GetPosition().x, MainCharacter1.GetPosition().y});
 
-        bgUpdate();
-        
-		// oamSet(&oamMain, 
-		// 	0, 
-		// 	ManSprite.x, ManSprite.y, 
-		// 	0, 
-		// 	0,
-		// 	SpriteSize_32x32,
-		// 	SpriteColorFormat_256Color, 
-		// 	ManSprite.sprite_gfx_mem[ManSprite.gfx_frame], 
-		// 	-1, 
-		// 	false, 
-		// 	false,
-		// 	false,
-		// 	false, 
-		// 	false);
+        Enemy1.projectile.MoveSprite(NULL);
+        Enemy2.projectile.MoveSprite(NULL);
+        Enemy3.projectile.MoveSprite(NULL);
+
+        p1.MoveSprite(NULL);
+        animator.AnimateSprites();
 
         swiWaitForVBlank();
         oamUpdate(&oamMain);
-
         oamUpdate(&oamSub);
-
-        consoleClear();
-        MainCharacter.MoveSprite(keys, BackgroundMap, width/8, scroll);
-        iprintf("X, Y = %d, %d\n", (int)SpriteX, (int)SpriteY);
-        iprintf("Scroll : %d, %d\n", (int)sx, (int)sy);
-        iprintf("Touch x, y = %d, %d", touch.px, touch.py);
-    i++;
-        if(i > width/8)
-        {
-            j++;
-            i = 0;
-        }
-        if(j > height/8)
-        {
-            j = 0;
-        }
-
-        animator.AnimateSprites();
     }
     return 0;
 }
